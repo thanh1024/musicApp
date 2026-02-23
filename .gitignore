@@ -1,0 +1,51 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Build
+build/
+bin/
+out/
+*.class
+*.jar
+*.war
+
+# Android
+*.apk
+*.ap_
+*.aab
+local.properties
+.gradle/
+app/build/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+target/
+.mvn/

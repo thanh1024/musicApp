@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tiêu đề bài hát *"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+        <EditText
+            android:id="@+id/editTextArtist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nghệ sĩ *"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+        <EditText
+            android:id="@+id/editTextGenre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Thể loại *"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+        <EditText
+            android:id="@+id/editTextFileUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="URL file nhạc *"
+            android:inputType="textUri"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+        <EditText
+            android:id="@+id/editTextAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Album (tùy chọn)"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+        <EditText
+            android:id="@+id/editTextMood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mood (tùy chọn)"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp" />
+
+    </LinearLayout>
+
+</ScrollView>

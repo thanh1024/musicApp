@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp" />
+
+    <ImageView
+        android:id="@+id/imageViewCaptured"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/buttonCapture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chụp ảnh"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp" />
+
+    <Button
+        android:id="@+id/buttonAnalyze"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phân tích cảm xúc"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp" />
+
+    <TextView
+        android:id="@+id/textViewEmotion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cảm xúc: -"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/textViewConfidence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Độ tin cậy: -"
+        android:textSize="16sp" />
+
+</LinearLayout>
