@@ -11,9 +11,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.musicapp.mobile.api.RetrofitClient;
 
 public class AdminActivity extends AppCompatActivity {
-    private Button buttonUsers, buttonSongs;
-    private SharedPreferences sharedPreferences;
-    private String userRole;
+    private Button buttonHome;
+    private Button buttonUsers;
+    private Button buttonSongs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +21,8 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
 
         RetrofitClient.init(this);
-        sharedPreferences = getSharedPreferences("MusicApp", MODE_PRIVATE);
-        userRole = sharedPreferences.getString("role", "ROLE_USER");
+        SharedPreferences sharedPreferences = getSharedPreferences("MusicApp", MODE_PRIVATE);
+        String userRole = sharedPreferences.getString("role", "ROLE_USER");
 
         // Kiểm tra quyền admin
         if (!"ROLE_ADMIN".equals(userRole)) {
@@ -34,24 +34,35 @@ public class AdminActivity extends AppCompatActivity {
         Button buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(v -> finish());
 
+        buttonHome = findViewById(R.id.buttonHome);
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonSongs = findViewById(R.id.buttonSongs);
 
+        buttonHome.setOnClickListener(v -> {
+            setActiveTab(buttonHome);
+            loadFragment(new AdminHomeFragment());
+        });
+
         buttonUsers.setOnClickListener(v -> {
-            buttonUsers.setSelected(true);
-            buttonSongs.setSelected(false);
+            setActiveTab(buttonUsers);
             loadFragment(new AdminUsersFragment());
         });
 
         buttonSongs.setOnClickListener(v -> {
-            buttonSongs.setSelected(true);
-            buttonUsers.setSelected(false);
+            setActiveTab(buttonSongs);
             loadFragment(new AdminSongsFragment());
         });
 
-        // Load mặc định fragment Users
-        buttonUsers.setSelected(true);
-        loadFragment(new AdminUsersFragment());
+        // Load mặc định dashboard admin
+        setActiveTab(buttonHome);
+        loadFragment(new AdminHomeFragment());
+    }
+
+    private void setActiveTab(Button activeButton) {
+        buttonHome.setSelected(false);
+        buttonUsers.setSelected(false);
+        buttonSongs.setSelected(false);
+        activeButton.setSelected(true);
     }
 
     private void loadFragment(Fragment fragment) {

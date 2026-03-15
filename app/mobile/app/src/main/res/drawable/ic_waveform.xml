@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="80dp"
+    android:viewportWidth="360"
+    android:viewportHeight="80">
+    <!-- Center glow line -->
+    <path
+        android:fillColor="#FFB264F5"
+        android:pathData="M0,39 H360 V41 H0 Z" />
+    <!-- Waveform bars - symmetric, brightest in center, fading to edges -->
+    <path
+        android:fillColor="#CCBB86FC"
+        android:pathData="M5,35 H9 V45 H5 Z
+                          M15,30 H19 V50 H15 Z
+                          M25,22 H29 V58 H25 Z
+                          M35,14 H39 V66 H35 Z
+                          M45,18 H49 V62 H45 Z
+                          M55,8 H59 V72 H55 Z
+                          M65,12 H69 V68 H65 Z
+                          M75,4 H79 V76 H75 Z
+                          M85,8 H89 V72 H85 Z
+                          M95,16 H99 V64 H95 Z
+                          M105,4 H109 V76 H105 Z
+                          M115,10 H119 V70 H115 Z
+                          M125,6 H129 V74 H125 Z
+                          M135,2 H139 V78 H135 Z
+                          M145,8 H149 V72 H145 Z
+                          M155,4 H159 V76 H155 Z
+                          M165,2 H169 V78 H165 Z
+                          M175,6 H179 V74 H175 Z
+                          M185,12 H189 V68 H185 Z
+                          M195,4 H199 V76 H195 Z
+                          M205,8 H209 V72 H205 Z
+                          M215,16 H219 V64 H215 Z
+                          M225,10 H229 V70 H225 Z
+                          M235,6 H239 V74 H235 Z
+                          M245,14 H249 V66 H245 Z
+                          M255,20 H259 V60 H255 Z
+                          M265,26 H269 V54 H265 Z
+                          M275,32 H279 V48 H275 Z
+                          M285,36 H289 V44 H285 Z
+                          M295,38 H299 V42 H295 Z
+                          M305,37 H309 V43 H305 Z
+                          M315,36 H319 V44 H315 Z
+                          M325,37 H329 V43 H325 Z
+                          M335,38 H339 V42 H335 Z
+                          M345,38 H349 V42 H345 Z" />
+</vector>

@@ -2,58 +2,89 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_dark"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#6200EE"
         android:padding="16dp">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_input_field"
+            android:padding="8dp"
+            android:src="@drawable/ic_shield"
+            android:tint="@color/color_primary_purple"
+            android:contentDescription="Admin" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Quản lý Admin"
-            android:textColor="#FFFFFF"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:text="Bảng điều khiển Admin"
+            android:textColor="@color/text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/buttonBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_input_field"
             android:text="←"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="@android:color/transparent" />
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#F5F5F5">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <Button
+            android:id="@+id/buttonHome"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_admin_tab_button"
+            android:text="Trang chủ"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/buttonUsers"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_weight="1"
-            android:text="Quản lý Users"
-            android:padding="16dp"
-            android:textColor="#6200EE"
-            android:backgroundTint="#E0E0E0" />
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_admin_tab_button"
+            android:text="Người dùng"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/buttonSongs"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_weight="1"
-            android:text="Quản lý Songs"
-            android:padding="16dp"
-            android:textColor="#6200EE"
-            android:backgroundTint="#E0E0E0" />
+            android:background="@drawable/bg_admin_tab_button"
+            android:text="Bài hát"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <FrameLayout

@@ -2,6 +2,7 @@ package com.musicapp.config;
 
 import com.musicapp.service.JwtService;
 import com.musicapp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -49,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         if (!role.startsWith("ROLE_")) {
                             role = "ROLE_" + role;
                         }
-                        logger.info("Setting authentication for user: {} with role: {}", username, role);
+                        log.info("Setting authentication for user: {} with role: {}", username, role);
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             user,
                             null,
@@ -58,13 +60,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     } else {
-                        logger.warn("Token validation failed for user: {} - isActive: {}, deleted: {}", 
+                        log.warn("Token validation failed for user: {} - isActive: {}, deleted: {}", 
                             username, user.getIsActive(), user.getDeleted());
                     }
                 });
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            log.error("Cannot set user authentication: {}", e);
         }
 
         filterChain.doFilter(request, response);
