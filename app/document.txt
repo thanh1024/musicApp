@@ -1,0 +1,25 @@
+1. Các chức năng cơ bản của hệ thống
+1.1 Quản lý người dùng
+•	Đăng ký tài khoản
+•	Đăng nhập / đăng xuất
+•	Chỉnh sửa thông tin cá nhân
+•	Lưu lịch sử nghe nhạc
+•	Lưu danh sách nhạc yêu thích 
+1.2 Nghe nhạc
+•	Hiển thị danh sách bài hát
+•	Phát / tạm dừng / chuyển bài
+•	Điều chỉnh âm lượng
+•	Nghe nhạc theo:
+o	Danh sách đề xuất
+o	Thể loại (Pop, Rock, Ballad, EDM, …)
+o	Tâm trạng (Vui, Buồn, Thư giãn, Căng thẳng…)
+1.3 Quản lý Playlist
+•	Tạo playlist cá nhân
+•	Thêm / xóa bài hát trong playlist
+•	Phát nhạc theo playlist
+1.4 Tìm kiếm nhạc
+•	Tìm theo:
+o	Tên bài hát
+o	Tên ca sĩ
+o	Thể loại
+•	Gợi ý kết quả khi nhập từ khóa
