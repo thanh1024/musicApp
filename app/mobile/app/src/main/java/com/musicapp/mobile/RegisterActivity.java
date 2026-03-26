@@ -17,84 +17,55 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText editTextUsername;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-    private EditText editTextFullName;
-    private Button buttonRegister;
-    private ApiService apiService;
-    private SharedPreferences sharedPreferences;
+    private static final String PREF_NAME = "MusicApp";
+    private static final String KEY_TOKEN = "token";
+    private static final String KEY_USER_ID = "userId";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_FULL_NAME = "fullName";
+    private static final String KEY_ROLE = "role";
+    private static final String DEFAULT_ROLE = "ROLE_USER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        editTextUsername = findViewById(R.id.editTextUsername);
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassword = findViewById(R.id.editTextPassword);
-        editTextFullName = findViewById(R.id.editTextFullName);
-        buttonRegister = findViewById(R.id.buttonRegister);
-
         RetrofitClient.init(this);
-        apiService = RetrofitClient.getApiService();
-        sharedPreferences = getSharedPreferences("MusicApp", MODE_PRIVATE);
+        ApiService apiService = RetrofitClient.getApiService();
 
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = editTextUsername.getText().toString().trim();
-                String email = editTextEmail.getText().toString().trim();
-                String password = editTextPassword.getText().toString().trim();
-                String fullName = editTextFullName.getText().toString().trim();
-
-                if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                register(username, email, password, fullName);
-            }
-        });
+        EditText editTextUsername = findViewById(R.id.editTextUsername);
+        EditText editTextEmail = findViewById(R.id.editTextEmail);
+        EditText editTextPassword = findViewById(R.id.editTextPassword);
+        EditText editTextFullName = findViewById(R.id.editTextFullName);
+        
+        Button buttonRegister = findViewById(R.id.buttonRegister);
+        buttonRegister.setOnClickListener(v -> handleRegister(editTextUsername, editTextEmail, 
+                editTextPassword, editTextFullName, apiService));
     }
 
-    private void register(String username, String email, String password, String fullName) {
+    private void handleRegister(EditText editTextUsername, EditText editTextEmail, 
+                               EditText editTextPassword, EditText editTextFullName, ApiService apiService) {
+        String username = editTextUsername.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+        String fullName = editTextFullName.getText().toString().trim();
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(RegisterActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        register(username, email, password, fullName, apiService);
+    }
+
+    private void register(String username, String email, String password, String fullName, ApiService apiService) {
         try {
             RegisterRequest request = new RegisterRequest(username, email, password, fullName);
             Call<AuthResponse> call = apiService.register(request);
             call.enqueue(new Callback<AuthResponse>() {
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        AuthResponse authResponse = response.body();
-                        
-                        if (authResponse.isSuccess()) {
-                            String token = authResponse.getToken();
-                            AuthResponse.UserInfo user = authResponse.getUser();
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("token", token);
-                            editor.putString("username", username);
-                            if (user != null) {
-                                if (user.getFullName() != null) {
-                                    editor.putString("fullName", user.getFullName());
-                                }
-                                // Lưu role từ response, mặc định là ROLE_USER
-                                String role = user.getRole() != null ? user.getRole() : "ROLE_USER";
-                                editor.putString("role", role);
-                            }
-                            editor.apply();
-
-                            Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            String message = authResponse.getMessage();
-                            Toast.makeText(RegisterActivity.this, message != null ? message : "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
-                    }
+                    handleRegisterResponse(response, username);
                 }
 
                 @Override
@@ -105,5 +76,52 @@ public class RegisterActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void handleRegisterResponse(Response<AuthResponse> response, String username) {
+        if (response.isSuccessful() && response.body() != null) {
+            AuthResponse authResponse = response.body();
+            
+            if (authResponse.isSuccess()) {
+                saveUserCredentials(authResponse, username);
+                Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                navigateToMainActivity();
+            } else {
+                String message = authResponse.getMessage();
+                Toast.makeText(RegisterActivity.this, message != null ? message : "Đăng ký thất bại", 
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(RegisterActivity.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveUserCredentials(AuthResponse authResponse, String username) {
+        String token = authResponse.getToken();
+        AuthResponse.UserInfo user = authResponse.getUser();
+        
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        
+        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_USERNAME, username);
+        
+        if (user != null) {
+            if (user.getId() != null) {
+                editor.putLong(KEY_USER_ID, user.getId());
+            }
+            if (user.getFullName() != null) {
+                editor.putString(KEY_FULL_NAME, user.getFullName());
+            }
+            String role = user.getRole() != null ? user.getRole() : DEFAULT_ROLE;
+            editor.putString(KEY_ROLE, role);
+        }
+        editor.apply();
+    }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

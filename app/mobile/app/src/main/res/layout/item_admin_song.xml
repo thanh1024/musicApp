@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
     android:layout_marginStart="2dp"
+    android:layout_marginTop="8dp"
     android:layout_marginEnd="2dp"
+    android:layout_marginBottom="8dp"
     app:cardBackgroundColor="@color/bg_card"
     app:cardCornerRadius="14dp"
     app:cardElevation="0dp">
@@ -18,13 +18,12 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header with Badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textViewSongBadge"
@@ -58,17 +57,16 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Song Title and Artist -->
         <TextView
             android:id="@+id/textViewSongTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="Song Title"
             android:textColor="@color/text_primary"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textViewSongArtist"
@@ -88,13 +86,12 @@
             android:textColor="@color/text_primary"
             android:textSize="12sp" />
 
-        <!-- Stats Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -170,12 +167,11 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonViewSongDetail"
@@ -206,18 +202,11 @@
             android:id="@+id/buttonDeleteSong"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:background="@drawable/bg_chip_inactive"
+            android:backgroundTint="#F44336"
             android:text="🗑️ Xóa Bài Hát"
             android:textAllCaps="false"
             android:textColor="@color/text_primary"
-            android:textSize="12sp"
-            android:background="@drawable/bg_chip_inactive" />
+            android:textSize="12sp" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
-            android:backgroundTint="#F44336"
-            android:textAllCaps="false"
-            android:textColor="@color/text_primary"
-            android:textSize="11sp" />
-
-    </LinearLayout>
-
 </androidx.cardview.widget.CardView>

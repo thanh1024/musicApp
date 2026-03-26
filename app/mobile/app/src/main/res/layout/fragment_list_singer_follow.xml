@@ -60,7 +60,7 @@
             android:layout_marginStart="12dp"
             android:background="@android:color/transparent"
             android:hint="Tìm kiếm nghệ sĩ"
-            android:hintTextColor="@color/text_hint"
+            android:textColorHint="@color/text_hint"
             android:textColor="@color/text_primary"
             android:textSize="15sp" />
     </LinearLayout>

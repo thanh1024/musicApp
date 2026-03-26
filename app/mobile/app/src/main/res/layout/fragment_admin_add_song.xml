@@ -16,8 +16,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,7 +36,6 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Thông Tin Cơ Bản -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,11 +56,11 @@
                 android:id="@+id/editAddSongTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_input_field"
                 android:hint="🎵 Tiêu Đề Bài Hát"
                 android:inputType="text"
                 android:padding="14dp"
-                android:layout_marginTop="10dp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint" />
 
@@ -90,7 +89,6 @@
                 android:textColorHint="@color/text_hint" />
         </LinearLayout>
 
-        <!-- Phân Loại -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +100,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎸 Phân Loại & Tâm Trạng"
+                android:text="🎸 Phân Loại Tâm Trạng"
                 android:textColor="@color/color_primary_purple"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -153,7 +151,6 @@
                 android:textColorHint="@color/text_hint" />
         </LinearLayout>
 
-        <!-- Phương Tiện & Liên Kết -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -165,7 +162,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎼 Phương Tiện & Liên Kết"
+                android:text="🎼 Phương Tiện Liên Kết"
                 android:textColor="@color/color_primary_purple"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -195,12 +192,11 @@
                 android:textColorHint="@color/text_hint" />
         </LinearLayout>
 
-        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="18dp">
+            android:layout_marginBottom="18dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonCancelAddSong"
@@ -221,11 +217,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_button_purple"
-                android:text="✅ Lưu & Đăng Bài"
-                android:textAllCaps="false"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:text="✅ Lưu Đăng Bài"
                 android:textAllCaps="false"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />

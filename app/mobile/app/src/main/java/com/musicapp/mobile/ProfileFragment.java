@@ -11,26 +11,32 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 public class ProfileFragment extends Fragment {
-    private TextView textViewUsername;
-    private Button buttonLogout;
-    private SharedPreferences sharedPreferences;
+    private static final String PREF_NAME = "MusicApp";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_ROLE = "role";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         
-        textViewUsername = view.findViewById(R.id.textViewUsername);
-        buttonLogout = view.findViewById(R.id.buttonLogout);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_NAME, getActivity().MODE_PRIVATE);
+        String username = sharedPreferences.getString(KEY_USERNAME, "");
+        String role = sharedPreferences.getString(KEY_ROLE, "ROLE_USER");
         
-        sharedPreferences = getActivity().getSharedPreferences("MusicApp", getActivity().MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "");
-        String role = sharedPreferences.getString("role", "ROLE_USER");
+        TextView textViewUsername = view.findViewById(R.id.textViewUsername);
         textViewUsername.setText("Username: " + username);
         
-        // Chỉ hiển thị nút Admin nếu là admin
+        setupAdminButton(view, role);
+        setupLogoutButton(view, sharedPreferences);
+        
+        return view;
+    }
+
+    private void setupAdminButton(View view, String role) {
         Button buttonAdmin = view.findViewById(R.id.buttonAdmin);
         if (buttonAdmin != null) {
-            if ("ROLE_ADMIN".equals(role)) {
+            if (ROLE_ADMIN.equals(role)) {
                 buttonAdmin.setVisibility(View.VISIBLE);
                 buttonAdmin.setOnClickListener(v -> {
                     Intent intent = new Intent(getActivity(), AdminActivity.class);
@@ -40,7 +46,10 @@ public class ProfileFragment extends Fragment {
                 buttonAdmin.setVisibility(View.GONE);
             }
         }
-        
+    }
+
+    private void setupLogoutButton(View view, SharedPreferences sharedPreferences) {
+        Button buttonLogout = view.findViewById(R.id.buttonLogout);
         buttonLogout.setOnClickListener(v -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
@@ -50,7 +59,5 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
             getActivity().finish();
         });
-        
-        return view;
     }
 }

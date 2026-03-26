@@ -64,7 +64,7 @@
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="Tìm tên bài hát, ca sĩ..."
-                android:hintTextColor="@color/text_hint"
+                android:textColorHint="@color/text_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -79,6 +79,23 @@
                 android:contentDescription="Tìm bằng giọng nói"
                 android:src="@drawable/ic_mic" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textSearchResultsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="Kết quả tìm kiếm"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearchResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:nestedScrollingEnabled="false" />
 
         <TextView
             android:layout_width="wrap_content"

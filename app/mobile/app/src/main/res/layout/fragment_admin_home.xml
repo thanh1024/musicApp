@@ -18,8 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -27,11 +27,8 @@
                 android:text="Xin chào Admin"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-         !-- Stats Cards Row 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,10 +39,10 @@
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginEnd="8dp">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -78,10 +75,10 @@
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginStart="8dp">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -111,7 +108,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Stats Cards Row 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,10 +117,10 @@
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginEnd="8dp">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -157,10 +153,10 @@
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginStart="8dp">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -186,22 +182,7 @@
                     android:layout_marginTop="6dp"
                     android:text="↑ 12,434 từ hôm qua"
                     android:textColor="@color/color_primary_purple"
-                    android:textSize="10sp
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tổng Bài hát"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/textDashboardSongs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="5,600"
-                    android:textColor="@color/text_primary"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
+                    android:textSize="10sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -215,6 +196,7 @@
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
                 android:padding="14dp">
@@ -237,14 +219,11 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <Space
-                android:layout_width="10dp"
-                android:layout_height="1dp" />
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_dark_card"
                 android:orientation="vertical"
                 android:padding="14dp">
@@ -257,7 +236,7 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/textDashboardLikes"
+                    android:id="@+id/textDashboardTotalLikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -291,16 +270,16 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/bg_input_field"
+                android:contentDescription="Users"
                 android:padding="8dp"
                 android:src="@drawable/ic_person"
-                android:tint="@color/color_primary_purple"
-                android:contentDescription="Users" />
+                android:tint="@color/color_primary_purple" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -322,9 +301,9 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="Mở"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="@color/text_secondary"
-                android:contentDescription="Mở" />
+                android:tint="@color/text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -341,16 +320,16 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/bg_input_field"
+                android:contentDescription="Songs"
                 android:padding="8dp"
                 android:src="@drawable/ic_music_note"
-                android:tint="@color/color_primary_purple"
-                android:contentDescription="Songs" />
+                android:tint="@color/color_primary_purple" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -372,9 +351,9 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="Mở"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="@color/text_secondary"
-                android:contentDescription="Mở" />
+                android:tint="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

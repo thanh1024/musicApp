@@ -11,10 +11,10 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.musicapp.mobile.api.ApiService;
 import com.musicapp.mobile.api.RetrofitClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,17 +25,28 @@ import java.util.List;
 import java.util.Map;
 
 public class AdminSongsFragment extends Fragment {
-    private RecyclerView recyclerViewSongs;
+    private static final String KEY_SUCCESS = "success";
+    private static final String KEY_DATA = "data";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_ID = "id";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_ARTIST = "artist";
+    private static final String KEY_ALBUM = "album";
+    private static final String KEY_GENRE = "genre";
+    private static final String KEY_MOOD = "mood";
+    private static final String KEY_DURATION = "duration";
+    private static final String KEY_FILE_URL = "fileUrl";
+    private static final String ERROR_PREFIX = "Lỗi: ";
+
     private ApiService apiService;
     private List<Map<String, Object>> songsList = new ArrayList<>();
     private SongsAdapter adapter;
-    private View dialogView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_songs, container, false);
 
-        recyclerViewSongs = view.findViewById(R.id.recyclerViewAdminSongs);
+        RecyclerView recyclerViewSongs = view.findViewById(R.id.recyclerViewAdminSongs);
         recyclerViewSongs.setLayoutManager(new LinearLayoutManager(getContext()));
 
         apiService = RetrofitClient.getApiService(getContext());
@@ -55,109 +66,136 @@ public class AdminSongsFragment extends Fragment {
     }
 
     private void loadSongs() {
-        Call<JSONObject> call = apiService.getAdminSongs();
-        call.enqueue(new Callback<JSONObject>() {
+        Call<JsonObject> call = apiService.getAdminSongs();
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    try {
-                        JSONObject jsonResponse = response.body();
-                        if (jsonResponse.getBoolean("success")) {
-                            JSONArray songs = jsonResponse.getJSONArray("data");
-                            songsList.clear();
-                            for (int i = 0; i < songs.length(); i++) {
-                                JSONObject song = songs.getJSONObject(i);
-                                Map<String, Object> songMap = new HashMap<>();
-                                songMap.put("id", song.getLong("id"));
-                                songMap.put("title", song.getString("title"));
-                                songMap.put("artist", song.getString("artist"));
-                                songMap.put("album", song.optString("album", ""));
-                                songMap.put("genre", song.getString("genre"));
-                                songMap.put("mood", song.optString("mood", ""));
-                                songMap.put("duration", song.getInt("duration"));
-                                songMap.put("fileUrl", song.getString("fileUrl"));
-                                songsList.add(songMap);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(getContext(), "Lỗi: " + jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getContext(), "Lỗi xử lý dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    String errorMsg = "Lỗi kết nối";
-                    if (response.code() == 401) {
-                        errorMsg = "Chưa đăng nhập hoặc token hết hạn";
-                    } else if (response.code() == 403) {
-                        errorMsg = "Không có quyền admin. Vui lòng đăng nhập với tài khoản admin.";
-                    } else if (response.code() >= 500) {
-                        errorMsg = "Lỗi server";
-                    }
-                    Toast.makeText(getContext(), errorMsg + " (Code: " + response.code() + ")", Toast.LENGTH_LONG).show();
-                }
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                handleLoadSongsResponse(response);
             }
 
             @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                String errorMsg = "Lỗi kết nối: " + t.getMessage();
-                if (t.getMessage() != null && t.getMessage().contains("Unable to resolve host")) {
-                    errorMsg = "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.";
-                } else if (t.getMessage() != null && t.getMessage().contains("timeout")) {
-                    errorMsg = "Kết nối timeout. Vui lòng thử lại.";
-                }
-                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                handleLoadSongsFailure(t);
             }
         });
+    }
+
+    private void handleLoadSongsResponse(Response<JsonObject> response) {
+        if (response.isSuccessful() && response.body() != null) {
+            try {
+                JsonObject jsonResponse = response.body();
+                if (jsonResponse.has(KEY_SUCCESS) && jsonResponse.get(KEY_SUCCESS).getAsBoolean()) {
+                    JsonArray songs = jsonResponse.getAsJsonArray(KEY_DATA);
+                    parseSongsData(songs);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), ERROR_PREFIX + getString(jsonResponse, KEY_MESSAGE),
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Lỗi xử lý dữ liệu: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            showErrorMessage(response.code());
+        }
+    }
+
+    private void parseSongsData(JsonArray songs) {
+        songsList.clear();
+        for (int i = 0; i < songs.size(); i++) {
+            JsonObject song = songs.get(i).getAsJsonObject();
+            Map<String, Object> songMap = createSongMap(song);
+            songsList.add(songMap);
+        }
+    }
+
+    private Map<String, Object> createSongMap(JsonObject song) {
+        Map<String, Object> songMap = new HashMap<>();
+        songMap.put(KEY_ID, song.get(KEY_ID).getAsLong());
+        songMap.put(KEY_TITLE, getString(song, KEY_TITLE));
+        songMap.put(KEY_ARTIST, getString(song, KEY_ARTIST));
+        songMap.put(KEY_ALBUM, getString(song, KEY_ALBUM));
+        songMap.put(KEY_GENRE, getString(song, KEY_GENRE));
+        songMap.put(KEY_MOOD, getString(song, KEY_MOOD));
+        songMap.put(KEY_DURATION, song.has(KEY_DURATION) ? song.get(KEY_DURATION).getAsInt() : 0);
+        songMap.put(KEY_FILE_URL, getString(song, KEY_FILE_URL));
+        return songMap;
+    }
+
+    private void handleLoadSongsFailure(Throwable t) {
+        String errorMsg = "Lỗi kết nối: " + t.getMessage();
+        if (t.getMessage() != null && t.getMessage().contains("Unable to resolve host")) {
+            errorMsg = "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.";
+        } else if (t.getMessage() != null && t.getMessage().contains("timeout")) {
+            errorMsg = "Kết nối timeout. Vui lòng thử lại.";
+        }
+        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    private void showErrorMessage(int code) {
+        String errorMsg = "Lỗi kết nối";
+        if (code == 401) {
+            errorMsg = "Chưa đăng nhập hoặc token hết hạn";
+        } else if (code == 403) {
+            errorMsg = "Không có quyền admin. Vui lòng đăng nhập với tài khoản admin.";
+        } else if (code >= 500) {
+            errorMsg = "Lỗi server";
+        }
+        Toast.makeText(getContext(), errorMsg + " (Code: " + code + ")", Toast.LENGTH_LONG).show();
     }
 
     private void showAddSongDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        dialogView = inflater.inflate(R.layout.dialog_add_song, null);
+        View dialogView = inflater.inflate(R.layout.dialog_add_song, null);
         builder.setView(dialogView);
         builder.setTitle("Thêm bài hát mới");
-        builder.setPositiveButton("Thêm", (dialog, which) -> {
-            EditText editTitle = dialogView.findViewById(R.id.editTextTitle);
-            EditText editArtist = dialogView.findViewById(R.id.editTextArtist);
-            EditText editGenre = dialogView.findViewById(R.id.editTextGenre);
-            EditText editFileUrl = dialogView.findViewById(R.id.editTextFileUrl);
-
-            Map<String, Object> songData = new HashMap<>();
-            songData.put("title", editTitle.getText().toString());
-            songData.put("artist", editArtist.getText().toString());
-            songData.put("genre", editGenre.getText().toString());
-            songData.put("fileUrl", editFileUrl.getText().toString());
-
-            createSong(songData);
-        });
+        builder.setPositiveButton("Thêm", (dialog, which) -> createSongFromDialog(dialogView));
         builder.setNegativeButton("Hủy", null);
         builder.show();
     }
 
+    private void createSongFromDialog(View dialogView) {
+        EditText editTitle = dialogView.findViewById(R.id.editTextTitle);
+        EditText editArtist = dialogView.findViewById(R.id.editTextArtist);
+        EditText editGenre = dialogView.findViewById(R.id.editTextGenre);
+        EditText editFileUrl = dialogView.findViewById(R.id.editTextFileUrl);
+
+        Map<String, Object> songData = new HashMap<>();
+        songData.put(KEY_TITLE, editTitle.getText().toString());
+        songData.put(KEY_ARTIST, editArtist.getText().toString());
+        songData.put(KEY_GENRE, editGenre.getText().toString());
+        songData.put(KEY_FILE_URL, editFileUrl.getText().toString());
+
+        createSong(songData);
+    }
+
     private void createSong(Map<String, Object> songData) {
-        Call<JSONObject> call = apiService.createSong(songData);
-        call.enqueue(new Callback<JSONObject>() {
+        Call<JsonObject> call = apiService.createSong(songData);
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
-                        JSONObject jsonResponse = response.body();
-                        if (jsonResponse.getBoolean("success")) {
+                        JsonObject jsonResponse = response.body();
+                        if (jsonResponse.has(KEY_SUCCESS) && jsonResponse.get(KEY_SUCCESS).getAsBoolean()) {
                             Toast.makeText(getContext(), "Đã thêm bài hát", Toast.LENGTH_SHORT).show();
                             loadSongs();
                         } else {
-                            Toast.makeText(getContext(), "Lỗi: " + jsonResponse.getString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), ERROR_PREFIX + getString(jsonResponse, KEY_MESSAGE),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        Toast.makeText(getContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), ERROR_PREFIX + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(getContext(), ERROR_PREFIX + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -173,11 +211,11 @@ public class AdminSongsFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             Map<String, Object> song = songsList.get(position);
-            holder.textViewTitle.setText((String) song.get("title"));
-            holder.textViewArtist.setText((String) song.get("artist"));
-            holder.textViewGenre.setText((String) song.get("genre"));
+            holder.textViewTitle.setText((String) song.get(KEY_TITLE));
+            holder.textViewArtist.setText((String) song.get(KEY_ARTIST));
+            holder.textViewGenre.setText((String) song.get(KEY_GENRE));
 
-            Long songId = (Long) song.get("id");
+            Long songId = (Long) song.get(KEY_ID);
             holder.buttonDelete.setOnClickListener(v -> deleteSong(songId, position));
         }
 
@@ -187,7 +225,9 @@ public class AdminSongsFragment extends Fragment {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textViewTitle, textViewArtist, textViewGenre;
+            TextView textViewTitle;
+            TextView textViewArtist;
+            TextView textViewGenre;
             Button buttonDelete;
 
             ViewHolder(View itemView) {
@@ -201,28 +241,36 @@ public class AdminSongsFragment extends Fragment {
     }
 
     private void deleteSong(Long songId, int position) {
-        Call<JSONObject> call = apiService.deleteSong(songId);
-        call.enqueue(new Callback<JSONObject>() {
+        Call<JsonObject> call = apiService.deleteSong(songId);
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
-                        JSONObject jsonResponse = response.body();
-                        if (jsonResponse.getBoolean("success")) {
+                        JsonObject jsonResponse = response.body();
+                        if (jsonResponse.has(KEY_SUCCESS) && jsonResponse.get(KEY_SUCCESS).getAsBoolean()) {
                             songsList.remove(position);
                             adapter.notifyItemRemoved(position);
                             Toast.makeText(getContext(), "Đã xóa bài hát", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        Toast.makeText(getContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), ERROR_PREFIX + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(getContext(), ERROR_PREFIX + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private String getString(JsonObject object, String key) {
+        if (object.has(key) && !object.get(key).isJsonNull()) {
+            return object.get(key).getAsString();
+        }
+        return "";
     }
 }
