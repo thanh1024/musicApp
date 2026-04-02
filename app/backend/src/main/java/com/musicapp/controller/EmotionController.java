@@ -92,6 +92,65 @@ public class EmotionController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Use this endpoint when emotion is predicted on-device (mobile).
+     * It will still log the emotion + confidence and return recommended songs,
+     * without calling the external AI service.
+     *
+     * Body example: { "emotion": "Happy", "confidence": 0.82 }
+     */
+    @PostMapping("/recommend")
+    public ResponseEntity<?> recommendByEmotion(@RequestParam Long userId, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        Object emotionObj = request.get("emotion");
+        if (emotionObj == null || String.valueOf(emotionObj).trim().isEmpty()) {
+            response.put("success", false);
+            response.put("message", "Thiếu emotion");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        String emotion = String.valueOf(emotionObj).trim();
+        Double confidence = null;
+        Object confidenceObj = request.get("confidence");
+        if (confidenceObj instanceof Number) {
+            confidence = ((Number) confidenceObj).doubleValue();
+        } else if (confidenceObj != null) {
+            try {
+                confidence = Double.parseDouble(String.valueOf(confidenceObj));
+            } catch (Exception ignored) {
+                confidence = null;
+            }
+        }
+
+        try {
+            // Save log (no image)
+            EmotionLog emotionLog = new EmotionLog();
+            emotionLog.setUserId(userId);
+            emotionLog.setEmotion(emotion);
+            if (confidence != null) {
+                emotionLog.setConfidence(BigDecimal.valueOf(confidence));
+            }
+            emotionLog.setImageUrl(null);
+            emotionLogRepository.save(emotionLog);
+
+            // Recommend songs
+            List<Song> recommendedSongs = getRecommendedSongsByEmotion(emotion);
+
+            response.put("success", true);
+            response.put("emotion", emotion);
+            if (confidence != null) {
+                response.put("confidence", confidence);
+            }
+            response.put("recommendedSongs", recommendedSongs);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Lỗi khi recommend: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     private List<Song> getRecommendedSongsByEmotion(String emotion) {
         // Mapping cảm xúc với thể loại nhạc
         String mood = mapEmotionToMood(emotion);
@@ -102,9 +161,11 @@ public class EmotionController {
         switch (emotion.toLowerCase()) {
             case "vui":
             case "happy":
+            case "surprise":
                 return "Vui";
             case "buồn":
             case "sad":
+            case "fear":
                 return "Buồn";
             case "thư giãn":
             case "relaxed":
@@ -112,9 +173,13 @@ public class EmotionController {
             case "căng thẳng":
             case "stressed":
             case "anxious":
-                return "Căng thẳng";
+            // DB seed currently uses moods: Vui / Buồn / Thư giãn / Bình thường
+            // Map stress/anxiety to an existing mood so recommendations are not empty.
+            return "Thư giãn";
             case "tức giận":
             case "angry":
+            case "disgust":
+            case "neutral":
                 return "Bình thường";
             default:
                 return "Bình thường";

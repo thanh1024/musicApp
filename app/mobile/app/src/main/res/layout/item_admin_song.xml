@@ -213,11 +213,3 @@
             android:background="@drawable/bg_chip_inactive" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-            android:backgroundTint="#F44336"
-            android:textAllCaps="false"
-            android:textColor="@color/text_primary"
-            android:textSize="11sp" />
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>

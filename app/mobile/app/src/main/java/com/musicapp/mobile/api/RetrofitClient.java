@@ -9,14 +9,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "http://172.17.170.40:8080/"; // Android emulator
-    // private static final String BASE_URL = "http://YOUR_IP:8080/"; // Real device
+    // Default:
+    // - Android Emulator -> use 10.0.2.2 to reach host localhost
+    // - Real device -> replace with your PC LAN IP
+    private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     private static Retrofit retrofit = null;
     private static Context appContext = null;
+    private static boolean jwtInterceptorEnabled = false;
 
     public static void init(Context context) {
         appContext = context.getApplicationContext();
+        // If retrofit was created before we had a context, rebuild so we can attach JwtInterceptor.
+        if (retrofit != null && !jwtInterceptorEnabled) {
+            retrofit = null;
+        }
     }
 
     public static ApiService getApiService() {
@@ -38,6 +45,9 @@ public class RetrofitClient {
             // Thêm JWT interceptor nếu có context
             if (appContext != null) {
                 clientBuilder.addInterceptor(new JwtInterceptor(appContext));
+                jwtInterceptorEnabled = true;
+            } else {
+                jwtInterceptorEnabled = false;
             }
 
             OkHttpClient client = clientBuilder.build();

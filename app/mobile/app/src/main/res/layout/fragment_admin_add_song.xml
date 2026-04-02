@@ -102,7 +102,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎸 Phân Loại & Tâm Trạng"
+                android:text="🎸 Phân Loại &amp; Tâm Trạng"
                 android:textColor="@color/color_primary_purple"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -165,7 +165,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎼 Phương Tiện & Liên Kết"
+                android:text="🎼 Phương Tiện &amp; Liên Kết"
                 android:textColor="@color/color_primary_purple"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -221,11 +221,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_button_purple"
-                android:text="✅ Lưu & Đăng Bài"
-                android:textAllCaps="false"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:text="✅ Lưu &amp; Đăng Bài"
                 android:textAllCaps="false"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />

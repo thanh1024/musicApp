@@ -20,7 +20,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editTextUsername;
     private EditText editTextPassword;
     private Button buttonLogin;
-    private Button buttonRegister;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
 
@@ -29,10 +28,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextUsername = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
-        buttonRegister = findViewById(R.id.buttonRegister);
+        View registerLink = findViewById(R.id.tvRegisterNow);
 
         RetrofitClient.init(this);
         apiService = RetrofitClient.getApiService();
@@ -45,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = editTextPassword.getText().toString().trim();
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Vui lòng nhập username và mật khẩu", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -53,13 +52,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (registerLink != null) {
+            registerLink.setOnClickListener(v -> {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
-            }
-        });
+            });
+        }
     }
 
     private void login(String username, String password) {
@@ -79,6 +77,9 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("token", token);
                             editor.putString("username", username);
                             if (user != null) {
+                                if (user.getId() != null) {
+                                    editor.putLong("userId", user.getId());
+                                }
                                 if (user.getFullName() != null) {
                                     editor.putString("fullName", user.getFullName());
                                 }

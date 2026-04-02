@@ -39,6 +39,11 @@
         
         <activity
             android:name=".EmotionActivity"
+            android:screenOrientation="fullSensor"
+            android:exported="false" />
+
+        <activity
+            android:name=".EmotionResultActivity"
             android:exported="false" />
         
         <activity

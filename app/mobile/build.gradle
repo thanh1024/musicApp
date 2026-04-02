@@ -9,6 +9,16 @@ buildscript {
     }
 }
 
+// IMPORTANT (Windows + OneDrive):
+// If the project lives under OneDrive with Files On-Demand enabled, Gradle outputs can become "ReparsePoint" files.
+// That breaks resource merging with errors like "values-xx.xml: not a regular file".
+// Write all build outputs to LOCALAPPDATA to avoid OneDrive file virtualization/locking.
+def _localBuildRoot = System.getenv("LOCALAPPDATA") ?: System.getProperty("java.io.tmpdir")
+rootProject.buildDir = new File(_localBuildRoot, "musicApp-android-build/root")
+subprojects { project ->
+    project.buildDir = new File(_localBuildRoot, "musicApp-android-build/${project.path.replace(':','_')}")
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

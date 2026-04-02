@@ -13,13 +13,13 @@ public class Song {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(nullable = false, length = 100)
+    @Transient
     private String artist;
 
     @Column(length = 100)
     private String album;
 
-    @Column(nullable = false, length = 50)
+    @Transient
     private String genre;
 
     @Column(length = 50)

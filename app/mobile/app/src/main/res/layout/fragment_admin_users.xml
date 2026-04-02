@@ -88,6 +88,18 @@
             android:textSize="12sp" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/buttonAddUser"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_button_purple"
+        android:text="➕ Thêm người dùng"
+        android:textAllCaps="false"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,6 +113,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/chipUsersAll"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:background="@drawable/bg_chip_active"
@@ -113,6 +126,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/chipUsersAdmins"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
@@ -125,6 +139,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/chipUsersActive"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
@@ -137,6 +152,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/chipUsersLocked"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
@@ -145,18 +161,6 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="🔒 Bị Khóa"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </HorizontalScrollView>
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_chip_inactive"
-                android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:text="Người dùng"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>

@@ -12,6 +12,8 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
+    role VARCHAR(20) DEFAULT 'ROLE_USER' COMMENT 'ROLE_USER or ROLE_ADMIN',
+    deleted BOOLEAN DEFAULT FALSE COMMENT 'Soft delete flag used by backend',
     INDEX idx_username (username),
     INDEX idx_email (email)
 );
@@ -20,9 +22,7 @@ CREATE TABLE users (
 CREATE TABLE songs (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL,
-    artist VARCHAR(100) NOT NULL,
     album VARCHAR(100),
-    genre VARCHAR(50) NOT NULL,
     mood VARCHAR(50),
     duration INT NOT NULL COMMENT 'Thời lượng tính bằng giây',
     file_url VARCHAR(500) NOT NULL COMMENT 'URL file nhạc hoặc streaming URL',
@@ -33,8 +33,6 @@ CREATE TABLE songs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_title (title),
-    INDEX idx_artist (artist),
-    INDEX idx_genre (genre),
     INDEX idx_mood (mood)
 );
 
@@ -125,6 +123,7 @@ CREATE TABLE recommended_songs (
 );
 
 -- Bảng JWT_Tokens - Quản lý token đăng nhập (optional, có thể dùng Redis)
+-- Gợi ý: dùng cho refresh token / revoke token / logout-all-devices.
 CREATE TABLE jwt_tokens (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
@@ -135,6 +134,42 @@ CREATE TABLE jwt_tokens (
     INDEX idx_token (token),
     INDEX idx_user_id (user_id),
     INDEX idx_expires_at (expires_at)
+);
+
+-- ========== NORMALIZED ARTISTS / GENRES (N-N) ==========
+-- Giữ cột songs.artist + songs.genre để tương thích code backend/mobile hiện tại.
+-- Khi migrate backend, sẽ đọc từ song_artists/song_genres thay vì text.
+
+CREATE TABLE artists (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_artist_name (name)
+);
+
+CREATE TABLE genres (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(80) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_genre_name (name)
+);
+
+CREATE TABLE song_artists (
+    song_id BIGINT NOT NULL,
+    artist_id BIGINT NOT NULL,
+    PRIMARY KEY (song_id, artist_id),
+    FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
+    INDEX idx_song_artists_artist_id (artist_id)
+);
+
+CREATE TABLE song_genres (
+    song_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
+    PRIMARY KEY (song_id, genre_id),
+    FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE,
+    INDEX idx_song_genres_genre_id (genre_id)
 );
 
 -- Insert dữ liệu mẫu cho testing

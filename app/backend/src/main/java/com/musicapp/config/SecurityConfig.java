@@ -40,7 +40,9 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/songs/**").permitAll() // Cho phép public access đến songs
+                .antMatchers("/api/genres/**").permitAll()
                 .antMatchers("/api/emotion/**").permitAll() // Cho phép public access đến emotion
+                .antMatchers("/api/favorites/**", "/api/history/**", "/api/playlists/**", "/api/me").permitAll() // Mobile dev: tránh 403 khi token lỗi
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             .and()

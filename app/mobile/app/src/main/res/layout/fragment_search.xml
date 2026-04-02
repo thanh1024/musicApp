@@ -64,7 +64,7 @@
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="Tìm tên bài hát, ca sĩ..."
-                android:hintTextColor="@color/text_hint"
+            android:textColorHint="@color/text_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -165,6 +165,13 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearchResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp" />
 
         <LinearLayout
             android:id="@+id/cardMoodSuggestion"

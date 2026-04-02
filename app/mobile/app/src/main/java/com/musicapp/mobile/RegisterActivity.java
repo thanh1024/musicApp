@@ -20,7 +20,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextUsername;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private EditText editTextFullName;
+    private EditText editTextConfirmPassword;
     private Button buttonRegister;
     private ApiService apiService;
     private SharedPreferences sharedPreferences;
@@ -30,10 +30,10 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextUsername = findViewById(R.id.editTextDisplayName);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
-        editTextFullName = findViewById(R.id.editTextFullName);
+        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
 
         RetrofitClient.init(this);
@@ -46,14 +46,20 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = editTextUsername.getText().toString().trim();
                 String email = editTextEmail.getText().toString().trim();
                 String password = editTextPassword.getText().toString().trim();
-                String fullName = editTextFullName.getText().toString().trim();
+                String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
                 if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Vui lòng nhập username, email và mật khẩu", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                register(username, email, password, fullName);
+                if (!confirmPassword.isEmpty() && !password.equals(confirmPassword)) {
+                    Toast.makeText(RegisterActivity.this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Layout đăng ký hiện tại chỉ có display name; dùng tạm làm fullName để backend không bị thiếu dữ liệu.
+                register(username, email, password, username);
             }
         });
     }
@@ -75,6 +81,9 @@ public class RegisterActivity extends AppCompatActivity {
                             editor.putString("token", token);
                             editor.putString("username", username);
                             if (user != null) {
+                                if (user.getId() != null) {
+                                    editor.putLong("userId", user.getId());
+                                }
                                 if (user.getFullName() != null) {
                                     editor.putString("fullName", user.getFullName());
                                 }

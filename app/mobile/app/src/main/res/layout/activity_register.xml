@@ -80,17 +80,17 @@
             </LinearLayout>
         </FrameLayout>
 
-        <!-- Display Name label -->
+        <!-- Username label -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tên hiển thị"
+            android:text="Username"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <!-- Display Name Input -->
+        <!-- Username Input -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="54dp"
@@ -115,20 +115,20 @@
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
-                android:hint="Nguyen Van A"
-                android:hintTextColor="@color/text_hint"
+                android:hint="nhap_username"
+        android:textColorHint="@color/text_hint"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:maxLines="1"
                 android:imeOptions="actionNext" />
         </LinearLayout>
 
-        <!-- Email / Phone label -->
+        <!-- Email label -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email hoặc Số điện thoại"
+            android:text="Email"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -160,7 +160,7 @@
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="nhac_ai@example.com"
-                android:hintTextColor="@color/text_hint"
+        android:textColorHint="@color/text_hint"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:inputType="textEmailAddress"
@@ -204,7 +204,7 @@
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="••••••••"
-                android:hintTextColor="@color/text_hint"
+        android:textColorHint="@color/text_hint"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:inputType="textPassword"
@@ -257,7 +257,7 @@
                 android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="••••••••"
-                android:hintTextColor="@color/text_hint"
+        android:textColorHint="@color/text_hint"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:inputType="textPassword"

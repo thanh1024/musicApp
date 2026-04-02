@@ -14,6 +14,8 @@ public class AdminActivity extends AppCompatActivity {
     private Button buttonHome;
     private Button buttonUsers;
     private Button buttonSongs;
+    private Button buttonArtists;
+    private Button buttonGenres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class AdminActivity extends AppCompatActivity {
         buttonHome = findViewById(R.id.buttonHome);
         buttonUsers = findViewById(R.id.buttonUsers);
         buttonSongs = findViewById(R.id.buttonSongs);
+        buttonArtists = findViewById(R.id.buttonArtists);
+        buttonGenres = findViewById(R.id.buttonGenres);
 
         buttonHome.setOnClickListener(v -> {
             setActiveTab(buttonHome);
@@ -53,6 +57,19 @@ public class AdminActivity extends AppCompatActivity {
             loadFragment(new AdminSongsFragment());
         });
 
+        if (buttonArtists != null) {
+            buttonArtists.setOnClickListener(v -> {
+                setActiveTab(buttonArtists);
+                loadFragment(new AdminArtistsFragment());
+            });
+        }
+        if (buttonGenres != null) {
+            buttonGenres.setOnClickListener(v -> {
+                setActiveTab(buttonGenres);
+                loadFragment(new AdminGenresFragment());
+            });
+        }
+
         // Load mặc định dashboard admin
         setActiveTab(buttonHome);
         loadFragment(new AdminHomeFragment());
@@ -62,6 +79,8 @@ public class AdminActivity extends AppCompatActivity {
         buttonHome.setSelected(false);
         buttonUsers.setSelected(false);
         buttonSongs.setSelected(false);
+        if (buttonArtists != null) buttonArtists.setSelected(false);
+        if (buttonGenres != null) buttonGenres.setSelected(false);
         activeButton.setSelected(true);
     }
 
@@ -69,5 +88,28 @@ public class AdminActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.admin_fragment_container, fragment);
         transaction.commit();
+    }
+
+    // Called from AdminHomeFragment quick actions
+    public void openUsers() {
+        setActiveTab(buttonUsers);
+        loadFragment(new AdminUsersFragment());
+    }
+
+    public void openSongs() {
+        setActiveTab(buttonSongs);
+        loadFragment(new AdminSongsFragment());
+    }
+
+    public void openArtists() {
+        if (buttonArtists == null) return;
+        setActiveTab(buttonArtists);
+        loadFragment(new AdminArtistsFragment());
+    }
+
+    public void openGenres() {
+        if (buttonGenres == null) return;
+        setActiveTab(buttonGenres);
+        loadFragment(new AdminGenresFragment());
     }
 }

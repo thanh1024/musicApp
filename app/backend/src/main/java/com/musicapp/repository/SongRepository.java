@@ -11,10 +11,18 @@ import java.util.List;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
     List<Song> findByTitleContainingIgnoreCase(String title);
-    List<Song> findByArtistContainingIgnoreCase(String artist);
-    List<Song> findByGenre(String genre);
     List<Song> findByMood(String mood);
-    
-    @Query("SELECT s FROM Song s WHERE s.title LIKE %:keyword% OR s.artist LIKE %:keyword%")
+
+    @Query(value = "SELECT DISTINCT s.* FROM songs s " +
+            "LEFT JOIN song_artists sa ON sa.song_id = s.id " +
+            "LEFT JOIN artists a ON a.id = sa.artist_id " +
+            "WHERE LOWER(s.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(a.name) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
     List<Song> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query(value = "SELECT DISTINCT s.* FROM songs s " +
+            "JOIN song_genres sg ON sg.song_id = s.id " +
+            "JOIN genres g ON g.id = sg.genre_id " +
+            "WHERE LOWER(g.name) = LOWER(:genre)", nativeQuery = true)
+    List<Song> findByGenreName(@Param("genre") String genre);
 }

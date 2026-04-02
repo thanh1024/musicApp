@@ -37,3 +37,9 @@ SOURCE schema.sql;
 Script đã bao gồm một số dữ liệu mẫu để test:
 - 1 user test (username: testuser, password: password123)
 - 5 bài hát mẫu với các thể loại và tâm trạng khác nhau
+
+## Seed dữ liệu để test filter (MySQL)
+
+Nếu bạn muốn có sẵn dataset để test filter theo **Artist/Genre** (có đủ `artists`, `genres`, `song_artists`, `song_genres`), chạy file này **một lần** trên MySQL:
+
+- `seed_filter_data_mysql.sql`

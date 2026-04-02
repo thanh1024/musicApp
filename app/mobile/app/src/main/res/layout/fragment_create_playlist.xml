@@ -121,7 +121,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:hint="VD: Nhạc Chill Đêm Khuya"
-                android:hintTextColor="@color/text_hint"
+        android:textColorHint="@color/text_hint"
                 android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
@@ -149,7 +149,7 @@
             android:background="@drawable/bg_input_field"
             android:gravity="top"
             android:hint="Nhập mô tả cho playlist của bạn..."
-            android:hintTextColor="@color/text_hint"
+        android:textColorHint="@color/text_hint"
             android:inputType="textMultiLine"
             android:padding="18dp"
             android:textColor="@color/text_primary"
