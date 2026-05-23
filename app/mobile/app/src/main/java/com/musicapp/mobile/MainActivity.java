@@ -94,9 +94,19 @@ public class MainActivity extends AppCompatActivity {
         btnMiniClose = findViewById(R.id.btnMiniClose);
 
         if (btnMiniPlayPause != null) btnMiniPlayPause.setOnClickListener(v -> AudioPlayer.togglePlayPause());
-        if (btnMiniClose != null) btnMiniClose.setOnClickListener(v -> AudioPlayer.stop());
+        // Nút mũi tên (bên phải) -> chuyển bài (Next). Nhấn giữ -> dừng phát.
+        if (btnMiniClose != null) {
+            btnMiniClose.setImageResource(R.drawable.ic_next);
+            btnMiniClose.setRotation(0);
+            btnMiniClose.setContentDescription("Next");
+            btnMiniClose.setOnClickListener(v -> AudioPlayer.next());
+            btnMiniClose.setOnLongClickListener(v -> {
+                AudioPlayer.stop();
+                return true;
+            });
+        }
 
-        AudioPlayer.setListener((isPlaying, title, positionMs) -> runOnUiThread(() -> {
+        AudioPlayer.addListener((isPlaying, title, positionMs) -> runOnUiThread(() -> {
             if (miniPlayer == null) return;
             if (title == null && positionMs <= 0 && !isPlaying) {
                 miniPlayer.setVisibility(View.GONE);
@@ -107,6 +117,12 @@ public class MainActivity extends AppCompatActivity {
             if (tvMiniElapsed != null) tvMiniElapsed.setText((positionMs / 1000) + "s");
             if (btnMiniPlayPause != null) btnMiniPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
         }));
+
+        // Tap mini-player -> open full player screen (seek/controls)
+        if (miniPlayer != null) {
+            miniPlayer.setOnClickListener(v ->
+                    startActivity(new Intent(MainActivity.this, PlayerActivity.class)));
+        }
     }
 
     private void ensureUserId() {

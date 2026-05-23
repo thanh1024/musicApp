@@ -45,15 +45,16 @@ public class HomeFragment extends Fragment {
         }
         
         apiService = RetrofitClient.getApiService(getContext());
-        adapter = new SongAdapter(getContext(), song -> {
-            AudioPlayer.play(getContext(), song.getFileUrl(), song.getTitle());
+        adapter = new SongAdapter(getContext(), (song, position, songs) -> {
+            // Play as a queue so Next works (recommended/trending list)
+            AudioPlayer.playQueue(getContext(), songs, position);
             saveHistory(song);
         });
         recyclerView.setAdapter(adapter);
 
         if (recentRecyclerView != null) {
-            recentAdapter = new RecentSongAdapter(getContext(), song -> {
-                AudioPlayer.play(getContext(), song.getFileUrl(), song.getTitle());
+            recentAdapter = new RecentSongAdapter(getContext(), (song, position, songs) -> {
+                AudioPlayer.playQueue(getContext(), songs, position);
                 saveHistory(song);
             });
             recentRecyclerView.setAdapter(recentAdapter);

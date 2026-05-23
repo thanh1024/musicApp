@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
@@ -161,13 +162,24 @@ public class EmotionActivity extends AppCompatActivity {
 
                 cameraProvider.unbindAll();
 
-                // Prefer front camera, but some emulators/devices may not support it.
+                // Prefer front camera. Only fall back if front camera is not available.
+                CameraSelector front = CameraSelector.DEFAULT_FRONT_CAMERA;
+                CameraSelector back = CameraSelector.DEFAULT_BACK_CAMERA;
+                boolean hasFront = false;
                 try {
-                    CameraSelector front = CameraSelector.DEFAULT_FRONT_CAMERA;
-                    cameraProvider.bindToLifecycle(this, front, preview, imageCapture);
-                } catch (Exception frontErr) {
-                    CameraSelector back = CameraSelector.DEFAULT_BACK_CAMERA;
-                    cameraProvider.bindToLifecycle(this, back, preview, imageCapture);
+                    hasFront = cameraProvider.hasCamera(front);
+                } catch (CameraInfoUnavailableException ignored) {}
+
+                try {
+                    if (hasFront) {
+                        cameraProvider.bindToLifecycle(this, front, preview, imageCapture);
+                    } else {
+                        Toast.makeText(this, "Thiết bị không có camera trước, dùng camera sau", Toast.LENGTH_SHORT).show();
+                        cameraProvider.bindToLifecycle(this, back, preview, imageCapture);
+                    }
+                } catch (Exception bindErr) {
+                    // If binding still fails, show a meaningful message rather than crashing.
+                    Toast.makeText(this, "Không mở được camera: " + bindErr.getMessage(), Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
                 Toast.makeText(this, "Không mở được camera: " + e.getMessage(), Toast.LENGTH_LONG).show();

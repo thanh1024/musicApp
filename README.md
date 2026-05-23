@@ -69,8 +69,24 @@ AI Service sẽ chạy tại `http://localhost:5000`
 
 1. Mở Android Studio
 2. Import project từ thư mục `app/mobile`
-3. Cấu hình BASE_URL trong `RetrofitClient.java` (đổi `10.0.2.2` thành IP máy tính nếu dùng thiết bị thật)
-4. Build và chạy trên emulator hoặc thiết bị thật
+3. Build và chạy trên emulator hoặc thiết bị thật
+
+#### Chạy trên **thiết bị thật qua USB** (khuyến nghị)
+
+- Cài Android SDK **Platform Tools** để có lệnh `adb` (Windows: thêm `...\Android\Sdk\platform-tools\` vào PATH).
+- Chạy backend Spring Boot trên PC tại `http://localhost:8080`.
+- Cắm USB + bật USB debugging, rồi chạy:
+
+```bash
+adb reverse tcp:8080 tcp:8080
+```
+
+App sẽ tự dùng `http://127.0.0.1:8080/` (đã cấu hình sẵn trong `RetrofitClient`) và `adb reverse` sẽ chuyển request về PC.
+
+#### Chạy trên **thiết bị thật qua Wi‑Fi/LAN**
+
+- Đảm bảo điện thoại và PC cùng mạng.
+- Cấu hình base URL API thành `http://<LAN_IP_PC>:8080/` (ví dụ `http://192.168.1.10:8080/`).
 
 ## Tính năng
 

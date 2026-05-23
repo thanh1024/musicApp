@@ -20,7 +20,7 @@ import java.util.List;
 public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.ViewHolder> {
 
     public interface Listener {
-        void onSongClicked(SongResponse.Song song);
+        void onSongClicked(SongResponse.Song song, int position, List<SongResponse.Song> songs);
     }
 
     private final Context context;
@@ -66,7 +66,7 @@ public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.Vi
         }
 
         View.OnClickListener playClick = v -> {
-            if (listener != null) listener.onSongClicked(song);
+            if (listener != null) listener.onSongClicked(song, holder.getBindingAdapterPosition(), new ArrayList<>(songs));
         };
 
         holder.btnPlay.setOnClickListener(playClick);

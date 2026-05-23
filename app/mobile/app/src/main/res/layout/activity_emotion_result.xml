@@ -52,5 +52,64 @@
         android:paddingEnd="8dp"
         android:clipToPadding="false" />
 
+    <!-- Mini player bar (shown when AudioPlayer is playing). -->
+    <LinearLayout
+        android:id="@+id/mini_player"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_mini_player"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvMiniTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang phát"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tvMiniElapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="0s"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnMiniPlayPause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_play"
+            android:contentDescription="Play/Pause" />
+
+        <ImageButton
+            android:id="@+id/btnMiniClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_next"
+            android:contentDescription="Next" />
+    </LinearLayout>
+
 </LinearLayout>
 

@@ -14,6 +14,12 @@ import androidx.media3.common.Player;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.exoplayer.ExoPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.musicapp.mobile.api.SongResponse;
+
 public class AudioPlayer {
     public interface Listener {
         void onStateChanged(boolean isPlaying, @Nullable String title, long positionMs);
@@ -23,7 +29,10 @@ public class AudioPlayer {
 
     private static ExoPlayer player;
     private static String currentTitle = null;
-    private static Listener listener;
+    private static final List<String> queueTitles = new ArrayList<>();
+    private static final List<SongResponse.Song> queueSongs = new ArrayList<>();
+    private static String queueContextLabel = null; // e.g. "Nhạc Tâm Trạng", "Playlist: Chill"
+    private static final CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<>();
     private static Context appContext;
     private static final String TAG = "AudioPlayer";
     private static final Handler handler = new Handler(Looper.getMainLooper());
@@ -39,8 +48,21 @@ public class AudioPlayer {
     };
 
     public static void setListener(@Nullable Listener l) {
-        listener = l;
-        notifyListener();
+        // Backward compatible: replace all listeners with one
+        listeners.clear();
+        if (l != null) listeners.add(l);
+        notifyListeners();
+    }
+
+    public static void addListener(@Nullable Listener l) {
+        if (l == null) return;
+        if (!listeners.contains(l)) listeners.add(l);
+        notifyListeners();
+    }
+
+    public static void removeListener(@Nullable Listener l) {
+        if (l == null) return;
+        listeners.remove(l);
     }
 
     private static void ensurePlayer(Context context) {
@@ -67,6 +89,18 @@ public class AudioPlayer {
                 }
             }
 
+            @Override
+            public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                // Update title for the new item
+                try {
+                    int idx = player != null ? player.getCurrentMediaItemIndex() : -1;
+                    if (idx >= 0 && idx < queueTitles.size()) {
+                        currentTitle = queueTitles.get(idx);
+                    }
+                } catch (Exception ignored) {}
+                notifyListener();
+            }
+
             @Override public void onPlaybackStateChanged(int playbackState) {
                 notifyListener();
                 if (playbackState == Player.STATE_BUFFERING) {
@@ -90,10 +124,48 @@ public class AudioPlayer {
     }
 
     private static void notifyListener() {
-        if (listener == null || player == null) return;
+        notifyListeners();
+    }
+
+    private static void notifyListeners() {
+        if (player == null || listeners.isEmpty()) return;
+        boolean isPlaying = false;
+        long pos = 0L;
         try {
-            listener.onStateChanged(player.isPlaying(), currentTitle, player.getCurrentPosition());
+            isPlaying = player.isPlaying();
+            pos = player.getCurrentPosition();
         } catch (Exception ignored) {}
+        for (Listener l : listeners) {
+            try {
+                l.onStateChanged(isPlaying, currentTitle, pos);
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public static boolean isPlaying() {
+        return player != null && player.isPlaying();
+    }
+
+    public static long getPositionMs() {
+        return player != null ? player.getCurrentPosition() : 0L;
+    }
+
+    public static long getDurationMs() {
+        long d = player != null ? player.getDuration() : 0L;
+        return d > 0 ? d : 0L;
+    }
+
+    @Nullable
+    public static String getCurrentTitle() {
+        return currentTitle;
+    }
+
+    public static void seekTo(long positionMs) {
+        if (player == null) return;
+        try {
+            player.seekTo(Math.max(0L, positionMs));
+        } catch (Exception ignored) {}
+        notifyListeners();
     }
 
     public static void play(Context context, String url) {
@@ -105,16 +177,65 @@ public class AudioPlayer {
             if (context != null) Toast.makeText(context, "Không có URL nhạc", Toast.LENGTH_SHORT).show();
             return;
         }
+        List<MediaItem> items = new ArrayList<>();
+        items.add(MediaItem.fromUri(url.trim()));
+        List<String> titles = new ArrayList<>();
+        titles.add((title != null && !title.trim().isEmpty()) ? title.trim() : "Đang phát");
+        playQueue(context, items, titles, 0);
+    }
+
+    public static void playQueue(Context context, List<? extends com.musicapp.mobile.api.SongResponse.Song> songs, int startIndex) {
+        if (context == null || songs == null || songs.isEmpty()) return;
+        int idx = Math.max(0, Math.min(startIndex, songs.size() - 1));
+
+        List<MediaItem> items = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        for (com.musicapp.mobile.api.SongResponse.Song s : songs) {
+            if (s == null) continue;
+            String url = s.getFileUrl();
+            if (url == null || url.trim().isEmpty()) continue;
+            items.add(MediaItem.fromUri(url.trim()));
+            String t = s.getTitle();
+            titles.add((t != null && !t.trim().isEmpty()) ? t.trim() : "Đang phát");
+        }
+        if (items.isEmpty()) {
+            Toast.makeText(context, "Không có URL nhạc", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // If some songs were skipped due to empty URL, clamp again
+        idx = Math.max(0, Math.min(idx, items.size() - 1));
+        // store canonical queue songs (as SongResponse.Song) for metadata
+        queueSongs.clear();
+        for (com.musicapp.mobile.api.SongResponse.Song s : songs) {
+            if (s == null || s.getFileUrl() == null || s.getFileUrl().trim().isEmpty()) continue;
+            queueSongs.add(s);
+        }
+
+        playQueue(context, items, titles, idx);
+    }
+
+    public static void playQueueWithContext(Context context, List<? extends com.musicapp.mobile.api.SongResponse.Song> songs, int startIndex, @Nullable String contextLabel) {
+        queueContextLabel = (contextLabel != null && !contextLabel.trim().isEmpty()) ? contextLabel.trim() : null;
+        playQueue(context, songs, startIndex);
+    }
+
+    private static void playQueue(Context context, List<MediaItem> items, List<String> titles, int startIndex) {
         try {
             ensurePlayer(context);
-            currentTitle = (title != null && !title.trim().isEmpty()) ? title.trim() : null;
+            queueTitles.clear();
+            if (titles != null) queueTitles.addAll(titles);
 
-            MediaItem item = MediaItem.fromUri(url.trim());
-            player.setMediaItem(item);
+            player.setMediaItems(items, startIndex, 0L);
+            // Set title immediately so mini-player can show even while buffering
+            if (startIndex >= 0 && startIndex < queueTitles.size()) {
+                currentTitle = queueTitles.get(startIndex);
+            } else {
+                currentTitle = "Đang phát";
+            }
+            notifyListener();
+
             player.prepare();
             player.play();
-
-            Toast.makeText(context, "Đang phát...", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(context, "Lỗi phát nhạc: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -123,6 +244,32 @@ public class AudioPlayer {
     public static void togglePlayPause() {
         if (player == null) return;
         if (player.isPlaying()) player.pause(); else player.play();
+        notifyListener();
+    }
+
+    public static void next() {
+        if (player == null) return;
+        try {
+            if (player.hasNextMediaItem()) {
+                player.seekToNextMediaItem();
+                player.play();
+            }
+        } catch (Exception ignored) {}
+        notifyListener();
+    }
+
+    public static void previous() {
+        if (player == null) return;
+        try {
+            if (player.hasPreviousMediaItem()) {
+                player.seekToPreviousMediaItem();
+                player.play();
+            } else {
+                // restart current
+                player.seekTo(0);
+                player.play();
+            }
+        } catch (Exception ignored) {}
         notifyListener();
     }
 
@@ -136,9 +283,33 @@ public class AudioPlayer {
         } finally {
             player = null;
             currentTitle = null;
+            queueTitles.clear();
+            queueSongs.clear();
             handler.removeCallbacks(ticker);
             notifyListener();
         }
+    }
+
+    @Nullable
+    public static SongResponse.Song getCurrentSong() {
+        try {
+            if (player == null) return null;
+            int idx = player.getCurrentMediaItemIndex();
+            if (idx < 0 || idx >= queueSongs.size()) return null;
+            return queueSongs.get(idx);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static String getQueueContextLabel() {
+        return queueContextLabel;
+    }
+
+    public static void setQueueContextLabel(@Nullable String label) {
+        queueContextLabel = (label != null && !label.trim().isEmpty()) ? label.trim() : null;
+        notifyListeners();
     }
 }
 

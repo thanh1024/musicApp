@@ -75,4 +75,7 @@ dependencies {
     
     // SharedPreferences for storing token
     implementation 'androidx.preference:preference:1.2.1'
+
+    // ML Kit Face Detection (on-device)
+    implementation 'com.google.mlkit:face-detection:16.1.5'
 }

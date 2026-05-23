@@ -411,8 +411,12 @@ public class AdminUsersFragment extends Fragment {
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(24, 12, 24, 0);
         EditText edUsername = new EditText(getContext()); edUsername.setHint("Username");
-        EditText edEmail = new EditText(getContext()); edEmail.setHint("Email");
-        EditText edPassword = new EditText(getContext()); edPassword.setHint("Password");
+        EditText edEmail = new EditText(getContext());
+        edEmail.setHint("Email");
+        edEmail.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        EditText edPassword = new EditText(getContext());
+        edPassword.setHint("Password");
+        edPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         EditText edFullName = new EditText(getContext()); edFullName.setHint("Full Name");
         EditText edRole = new EditText(getContext()); edRole.setHint("ROLE_USER / ROLE_ADMIN");
         edRole.setText("ROLE_USER");
@@ -423,17 +427,45 @@ public class AdminUsersFragment extends Fragment {
                 .setView(layout)
                 .setNegativeButton("Hủy", null)
                 .setPositiveButton("Thêm", (d, w) -> {
+                    String username = edUsername.getText().toString().trim();
+                    String email = edEmail.getText().toString().trim();
+                    String password = edPassword.getText().toString().trim();
+                    String fullName = edFullName.getText().toString().trim();
+                    String role = edRole.getText().toString().trim();
+
+                    // Client-side validate trước khi gọi API để tránh 400 không cần thiết
+                    if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                        Toast.makeText(getContext(), "username, email, password là bắt buộc", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        Toast.makeText(getContext(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (role.isEmpty()) role = "ROLE_USER";
+
                     Map<String, Object> body = new HashMap<>();
-                    body.put("username", edUsername.getText().toString().trim());
-                    body.put("email", edEmail.getText().toString().trim());
-                    body.put("password", edPassword.getText().toString().trim());
-                    body.put("fullName", edFullName.getText().toString().trim());
-                    body.put("role", edRole.getText().toString().trim());
+                    body.put("username", username);
+                    body.put("email", email);
+                    body.put("password", password);
+                    body.put("fullName", fullName);
+                    body.put("role", role);
                     apiService.createAdminUser(body).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (!response.isSuccessful() || response.body() == null) {
-                                Toast.makeText(getContext(), "Thêm thất bại (code " + response.code() + ")", Toast.LENGTH_SHORT).show();
+                            if (!response.isSuccessful()) {
+                                String msg = "Thêm thất bại (code " + response.code() + ")";
+                                try {
+                                    if (response.errorBody() != null) {
+                                        String err = response.errorBody().string();
+                                        if (err != null && !err.isEmpty()) {
+                                            JSONObject eobj = new JSONObject(err);
+                                            String detail = eobj.optString("message", "");
+                                            if (!detail.isEmpty()) msg = detail + " (code " + response.code() + ")";
+                                        }
+                                    }
+                                } catch (Exception ignored) {}
+                                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 return;
                             }
                             try {

@@ -34,7 +34,7 @@ import retrofit2.Response;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     public interface Listener {
-        void onSongClicked(SongResponse.Song song);
+        void onSongClicked(SongResponse.Song song, int position, List<SongResponse.Song> songs);
     }
 
     private final Context context;
@@ -84,7 +84,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         holder.btnLike.setImageResource(liked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onSongClicked(song);
+            if (listener != null) listener.onSongClicked(song, holder.getBindingAdapterPosition(), new ArrayList<>(songs));
         });
 
         holder.btnLike.setOnClickListener(v -> toggleFavorite(song));

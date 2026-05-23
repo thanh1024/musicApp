@@ -216,15 +216,6 @@
                 android:layout_weight="1"
                 android:background="@color/bg_input_border" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="HOẶC TIẾP TỤC VỚI"
-                android:textColor="@color/text_hint"
-                android:textSize="11sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
@@ -233,34 +224,7 @@
         </LinearLayout>
 
         <!-- Social Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="28dp">
 
-            <Button
-                android:id="@+id/btnGoogle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_social_button"
-                android:text="Google"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/btnApple"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_social_button"
-                android:text="iOS  Apple"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp" />
-        </LinearLayout>
 
         <!-- Register Link -->
         <LinearLayout

@@ -23,11 +23,19 @@ public class EmotionResultActivity extends AppCompatActivity {
     public static final String EXTRA_CONFIDENCE = "extra_confidence";
     public static final String EXTRA_RECOMMENDED_SONGS_JSON = "extra_recommended_songs_json";
 
+    private android.view.View miniPlayer;
+    private TextView tvMiniTitle;
+    private TextView tvMiniElapsed;
+    private ImageButton btnMiniPlayPause;
+    private ImageButton btnMiniClose;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Simple results screen: list only (no decorative cards)
         setContentView(R.layout.activity_emotion_result);
+
+        bindMiniPlayer();
 
         ImageButton back = findViewById(R.id.btnBackResult);
         if (back != null) back.setOnClickListener(v -> finish());
@@ -47,8 +55,9 @@ public class EmotionResultActivity extends AppCompatActivity {
         }
 
         RecyclerView rv = findViewById(R.id.recyclerRecommendedSongs);
-        SongAdapter adapter = new SongAdapter(this, song -> {
-            AudioPlayer.play(this, song != null ? song.getFileUrl() : null, song != null ? song.getTitle() : null);
+        SongAdapter adapter = new SongAdapter(this, (song, position, songs) -> {
+            String label = emotion != null && !emotion.trim().isEmpty() ? ("Gợi ý theo cảm xúc: " + emotion) : "Gợi ý theo cảm xúc";
+            AudioPlayer.playQueueWithContext(this, songs, position, label);
         });
         if (rv != null) {
             rv.setLayoutManager(new LinearLayoutManager(this));
@@ -61,6 +70,41 @@ public class EmotionResultActivity extends AppCompatActivity {
 
         if (songs == null || songs.isEmpty()) {
             Toast.makeText(this, "Không có bài gợi ý", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void bindMiniPlayer() {
+        miniPlayer = findViewById(R.id.mini_player);
+        tvMiniTitle = findViewById(R.id.tvMiniTitle);
+        tvMiniElapsed = findViewById(R.id.tvMiniElapsed);
+        btnMiniPlayPause = findViewById(R.id.btnMiniPlayPause);
+        btnMiniClose = findViewById(R.id.btnMiniClose);
+
+        if (btnMiniPlayPause != null) btnMiniPlayPause.setOnClickListener(v -> AudioPlayer.togglePlayPause());
+        if (btnMiniClose != null) {
+            btnMiniClose.setOnClickListener(v -> AudioPlayer.next());
+            btnMiniClose.setOnLongClickListener(v -> {
+                AudioPlayer.stop();
+                return true;
+            });
+        }
+
+        AudioPlayer.addListener((isPlaying, title, positionMs) -> runOnUiThread(() -> {
+            if (miniPlayer == null) return;
+            if (title == null && positionMs <= 0 && !isPlaying) {
+                miniPlayer.setVisibility(android.view.View.GONE);
+                return;
+            }
+            miniPlayer.setVisibility(android.view.View.VISIBLE);
+            if (tvMiniTitle != null) tvMiniTitle.setText(title != null ? title : "Đang phát");
+            if (tvMiniElapsed != null) tvMiniElapsed.setText((positionMs / 1000) + "s");
+            if (btnMiniPlayPause != null) btnMiniPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
+        }));
+
+        // Tap mini-player -> open full player screen (seek/controls)
+        if (miniPlayer != null) {
+            miniPlayer.setOnClickListener(v ->
+                    startActivity(new android.content.Intent(EmotionResultActivity.this, PlayerActivity.class)));
         }
     }
 

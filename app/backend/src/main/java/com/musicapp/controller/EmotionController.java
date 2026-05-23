@@ -152,7 +152,6 @@ public class EmotionController {
     }
 
     private List<Song> getRecommendedSongsByEmotion(String emotion) {
-        // Mapping cảm xúc với thể loại nhạc
         String mood = mapEmotionToMood(emotion);
         return songRepository.findByMood(mood);
     }
@@ -173,9 +172,7 @@ public class EmotionController {
             case "căng thẳng":
             case "stressed":
             case "anxious":
-            // DB seed currently uses moods: Vui / Buồn / Thư giãn / Bình thường
-            // Map stress/anxiety to an existing mood so recommendations are not empty.
-            return "Thư giãn";
+                return "Thư giãn";
             case "tức giận":
             case "angry":
             case "disgust":

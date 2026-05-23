@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:gravity="top|center_horizontal"
+    android:background="@color/bg_dark">
 
     <TextView
         android:id="@+id/textViewUsername"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Username"
         android:textSize="18sp"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="24dp" />
 
     <Button
@@ -22,8 +24,8 @@
         android:padding="12dp"
         android:layout_marginBottom="16dp"
         android:visibility="gone"
-        android:backgroundTint="#6200EE"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="@color/color_primary_purple"
+        android:textColor="@color/text_primary" />
 
     <Button
         android:id="@+id/buttonProfile"
@@ -32,8 +34,8 @@
         android:text="Hồ sơ cá nhân"
         android:padding="14dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#6200EE"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="@color/color_primary_purple"
+        android:textColor="@color/text_primary" />
 
     <Button
         android:id="@+id/buttonChangePassword"
@@ -42,8 +44,8 @@
         android:text="Đổi mật khẩu"
         android:padding="14dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#03DAC5"
-        android:textColor="@android:color/black" />
+        android:backgroundTint="@color/teal_200"
+        android:textColor="@color/black" />
 
     <Button
         android:id="@+id/buttonLogout"
@@ -51,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="Đăng xuất"
         android:padding="14dp"
-        android:backgroundTint="#B00020"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="#EF4444"
+        android:textColor="@color/text_primary" />
 
 </LinearLayout>

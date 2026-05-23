@@ -38,6 +38,7 @@ public class PlaylistFragment extends Fragment {
     private TextView tabMine;
     private TextView tabFavorites;
     private TextView tabRecent;
+    private java.util.List<SongResponse.Song> currentPlaylistSongs = new java.util.ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,12 +58,28 @@ public class PlaylistFragment extends Fragment {
 
                 @Override
                 public void onSongClicked(SongResponse.Song song) {
-                    AudioPlayer.play(getContext(), song != null ? song.getFileUrl() : null, song != null ? song.getTitle() : null);
+                    // Auto play through the whole playlist (queue)
+                    int idx = -1;
+                    if (song != null && currentPlaylistSongs != null) {
+                        for (int i = 0; i < currentPlaylistSongs.size(); i++) {
+                            SongResponse.Song s = currentPlaylistSongs.get(i);
+                            if (s != null && s.getId() != null && song.getId() != null && s.getId().equals(song.getId())) {
+                                idx = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (idx >= 0 && currentPlaylistSongs != null && !currentPlaylistSongs.isEmpty()) {
+                        AudioPlayer.playQueue(getContext(), currentPlaylistSongs, idx);
+                    } else {
+                        AudioPlayer.play(getContext(), song != null ? song.getFileUrl() : null, song != null ? song.getTitle() : null);
+                    }
                     saveHistory(song);
                 }
             });
-            songAdapter = new SongAdapter(getContext(), song -> {
-                AudioPlayer.play(getContext(), song != null ? song.getFileUrl() : null, song != null ? song.getTitle() : null);
+            songAdapter = new SongAdapter(getContext(), (song, position, songs) -> {
+                // Favorites/Recent tab: play as queue so Next works
+                AudioPlayer.playQueue(getContext(), songs, position);
                 saveHistory(song);
             });
             recyclerPlaylists.setAdapter(adapter); // default: playlists
@@ -248,8 +265,10 @@ public class PlaylistFragment extends Fragment {
             public void onResponse(Call<SongResponse> call, Response<SongResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     if (adapter != null && response.body().getData() != null) {
+                        currentPlaylistSongs = new java.util.ArrayList<>(response.body().getData());
                         adapter.showSongsForExpanded(playlistId, response.body().getData());
                     } else if (adapter != null) {
+                        currentPlaylistSongs = new java.util.ArrayList<>();
                         adapter.showSongsForExpanded(playlistId, java.util.Collections.emptyList());
                     }
                 } else {

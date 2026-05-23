@@ -39,8 +39,8 @@ public class SearchFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerSearchResults);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            adapter = new SongAdapter(getContext(), song -> {
-                AudioPlayer.play(getContext(), song.getFileUrl(), song.getTitle());
+            adapter = new SongAdapter(getContext(), (song, position, songs) -> {
+                AudioPlayer.playQueue(getContext(), songs, position);
                 // click -> lưu history
                 if (song != null && song.getId() != null) {
                     java.util.Map<String, Object> body = new java.util.HashMap<>();
